@@ -1,70 +1,6 @@
-/*
-#include <iostream>
-#include <dlib/dnn.h>
-#include <dlib/data_io.h>
-#include <dlib/image_processing.h>
-#include <dlib/gui_widgets.h>
-#include <windows.h>
-
-
-using namespace std;
-using namespace dlib;
-
-// ----------------------------------------------------------------------------------------
-
-template <long num_filters, typename SUBNET> using con5d = con<num_filters, 5, 5, 2, 2, SUBNET>;
-template <long num_filters, typename SUBNET> using con5 = con<num_filters, 5, 5, 1, 1, SUBNET>;
-
-template <typename SUBNET> using downsampler = relu<affine<con5d<32, relu<affine<con5d<32, relu<affine<con5d<16, SUBNET>>>>>>>>>;
-template <typename SUBNET> using rcon5 = relu<affine<con5<45, SUBNET>>>;
-
-using net_type = loss_mmod<con<1, 9, 9, 1, 1, rcon5<rcon5<rcon5<downsampler<input_rgb_image_pyramid<pyramid_down<6>>>>>>>>;
-
-// ----------------------------------------------------------------------------------------
-
-
-int main() try
-{
-	
-
-
-	net_type net;
-	deserialize("C:/dlib-19.2/python_examples/mmod_human_face_detector.dat") >> net;
-
-	image_window win;
-	for (int i = 2; i < 3; ++i)
-	{
-		matrix<rgb_pixel> img;
-		load_image(img, "D:/New_Dataset/2face/Active80.jpg");
-
-		// Upsampling the image will allow us to detect smaller faces but will cause the
-		// program to use more RAM and run longer.
-		while (img.size() < 1800 * 1800)
-			pyramid_up(img);
-
-		// Note that you can process a bunch of images in a std::vector at once and it runs
-		// much faster, since this will form mini-batches of images and therefore get
-		// better parallelism out of your GPU hardware.  However, all the images must be
-		// the same size.  To avoid this requirement on images being the same size we
-		// process them individually in this example.
-		auto dets = net(img);
-		win.clear_overlay();
-		win.set_image(img);
-		for (auto&& d : dets)
-			win.add_overlay(d);
-
-		cout << "Hit enter to process the next image." << endl;
-		cin.get();
-	}
-}
-catch (std::exception& e)
-{
-	cout << e.what() << endl;
-}*/
-
 #include<vector>
 #include<math.h>
-//#include<Windows.h>
+
 #include <iostream>
 #include <dlib/opencv.h>
 #include <opencv2/core/core.hpp>
@@ -75,22 +11,13 @@ catch (std::exception& e)
 #include <dlib/image_processing/render_face_detections.h>
 #include <dlib/image_processing.h>
 #include <dlib/gui_widgets.h>
-//#include <dlib/dnn.h>
-//#include <dlib/data_io.h>
+
 #include <time.h>
 
 using namespace dlib;
 using namespace std;
 using namespace cv;
 
-
-/*template <long num_filters, typename SUBNET> using con5d = con<num_filters, 5, 5, 2, 2, SUBNET>;
-template <long num_filters, typename SUBNET> using con5 = con<num_filters, 5, 5, 1, 1, SUBNET>;
-
-template <typename SUBNET> using downsampler = relu<affine<con5d<32, relu<affine<con5d<32, relu<affine<con5d<16, SUBNET>>>>>>>>>;
-template <typename SUBNET> using rcon5 = relu<affine<con5<45, SUBNET>>>;
-
-using net_type = loss_mmod<con<1, 9, 9, 1, 1, rcon5<rcon5<rcon5<downsampler<input_rgb_image_pyramid<pyramid_down<6>>>>>>>>;*/
 
 
 //Intrisics can be calculated using opencv sample code under opencv/sources/samples/cpp/tutorial_code/calib3d
@@ -132,7 +59,7 @@ int main()
 	side = "center";
 	//open webcam
 	cv::VideoCapture cap(0);
-	//cv::VideoCapture cap("C:/Users/alvin/Desktop/vid1.mp4");
+	
 	if (!cap.isOpened())
 	{
 		cerr << "Unable to connect to camera" << endl;
@@ -144,9 +71,8 @@ int main()
 	//Load face detection and pose estimation models (dlib).
 	frontal_face_detector detector = get_frontal_face_detector();
 	shape_predictor predictor;
-	deserialize("home/rohit/shape_predictor_68_face_landmarks.dat") >> predictor;
-	//deserialize("C:/dlib-19.2/python_examples/mmod_human_face_detector.dat") >> net;
-
+	deserialize("shape_predictor_68_face_landmarks.dat") >> predictor;
+	
 
 	//fill in cam intrinsics and distortion coefficients
 	cv::Mat cam_matrix = cv::Mat(3, 3, CV_64FC1, K);
@@ -199,8 +125,7 @@ int main()
 	cv::Mat out_rotation = cv::Mat(3, 3, CV_64FC1);
 	cv::Mat out_translation = cv::Mat(3, 1, CV_64FC1);
 
-	//namedWindow("Demo", 0);
-	//resizeWindow("Demo", 640, 480);
+
 
 	//text on screen
 	ostringstream outtext;
